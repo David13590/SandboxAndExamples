@@ -3,8 +3,8 @@
 #include <iostream>
 
 const std::string SERVER_ADDRESS("tcp://localhost:1883");
-const std::string CLIENT_ID("cpp_subscriber");
-const std::string TOPIC("test/topic");
+const std::string CLIENT_ID("cpp_test_subscriber");
+const std::string TOPIC("spBv1.0/officeb/DDATA/ventilationchamber2/olimextemp");
 
 class callback : public virtual mqtt::callback {
     void message_arrived(mqtt::const_message_ptr msg) override {

@@ -5,10 +5,16 @@
 #include <nlohmann/json.hpp>
 #include <mqtt/async_client.h>
 
+using namespace std;
 using json = nlohmann::json;
 
-const std::string SERVER_ADDRESS("tcp://localhost:1883");
-const std::string CLIENT_ID("ExampleClient");
+const string SERVER_ADDRESS("tcp://localhost:1883");
+const string CLIENT_ID("test_publisher");
+
+
+void sampleTime(){
+    time_t timenow = time(nullptr);
+}
 
 int main() {
   
@@ -19,11 +25,11 @@ int main() {
 
     try {
         client.connect(connOpts)->wait();
-        std::cout << "Connected to the MQTT broker!" << std::endl;
+        cout << "Connected to the MQTT broker!" << endl;
         
         // Follow topic structure of Sparkplug B version 1.0
-        const std::string topic("spBv1.0/officeb/DDATA/ventilationchamber2/olimextemp");
-        // const std::string payload("Hello, MQTT!");
+        const string topic("spBv1.0/officeb/DDATA/ventilationchamber2/olimextemp");
+        // const string payload("Hello, MQTT!");
         // Create JSON payload written in raw JSON
         json jsonpayload = json::parse(R"(
                                    {
@@ -39,21 +45,23 @@ int main() {
                                    }
                                    )");
         // Convert JSON payload to string
-        std::string payload = jsonpayload.dump(4);
+        string payload = jsonpayload.dump(4);
         client.publish(topic, payload.data(), payload.size(), 0, false);
-        std::cout << "Message published!" << std::endl;
+        cout << "Message published!" << endl;
+
         // You can also construct the JSON object sequentially
         json altpayload; // empty JSON structure 
-        std::time_t timenow = std::time(nullptr);
-        altpayload["timestamp"] = timenow;
-        altpayload["metrics"]["timestamp"] = sampleTime(); // function to do
+        time_t sendTime = time(nullptr);
+        time_t payloadTime = time(nullptr);
+        altpayload["timestamp"] = sendTime;
+        altpayload["metrics"]["timestamp"] = payloadTime; // function to do
         altpayload["metrics"]["name"] = "temperature";
-        altpayload["value"] = measureTemp(); // function do do
-        std::string publish_payload = altpayload.dump(4);
+        altpayload["value"] = 25; // function do do
+        string publish_payload = altpayload.dump(4);
         client.publish(topic, publish_payload.data(), publish_payload.size(), 0, false);
         client.disconnect()->wait();
     } catch (const mqtt::exception& exc) {
-        std::cerr << "Error: " << exc.what() << std::endl;
+        cerr << "Error: " << exc.what() << endl;
     }
 
     return 0;
