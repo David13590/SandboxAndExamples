@@ -7,19 +7,29 @@
 
 using namespace std;
 using json = nlohmann::json;
-
 const string SERVER_ADDRESS("tcp://localhost:1883");
 const string CLIENT_ID("test_publisher");
 
-
-void sampleTime(){
+unsigned long sampleTime(){
     time_t timenow = time(nullptr);
+    return timenow;
+}
+
+bool firstMsgSeq = true;
+int resetMsgSeq = 0;
+unsigned long currMsgSeq = 0;
+unsigned long msgSeq(){
+    if (firstMsgSeq){
+        currMsgSeq = resetMsgSeq;
+        firstMsgSeq = false;
+    }
+    currMsgSeq++;
+    return currMsgSeq;
 }
 
 int main() {
-  
-  mqtt::async_client client(SERVER_ADDRESS, CLIENT_ID);
 
+    mqtt::async_client client(SERVER_ADDRESS, CLIENT_ID);
     mqtt::connect_options connOpts;
     connOpts.set_clean_session(true);
 
@@ -29,7 +39,6 @@ int main() {
         
         // Follow topic structure of Sparkplug B version 1.0
         const string topic("spBv1.0/officeb/DDATA/ventchamber2/temp1");
-        // const string payload("Hello, MQTT!");
         // Create JSON payload written in raw JSON
         json jsonpayload = json::parse(R"(
                                    {
@@ -51,20 +60,21 @@ int main() {
 
         // You can also construct the JSON object sequentially
         json altpayload; // empty JSON structure 
-
         time_t sendTime = time(nullptr);
-        time_t payloadTime = time(nullptr);
+        
+        while (client.is_connected()){
+            altpayload["timestamp"] = sendTime;
+            altpayload["metrics"]["timestamp"] = sampleTime(); // function to do
+            altpayload["metrics"]["name"] = "temperature";
+            altpayload["value"] = 24; // function do do
+            altpayload["seq"] = msgSeq();
 
-        altpayload["timestamp"] = sendTime;
-        altpayload["metrics"]["timestamp"] = payloadTime; // function to do
-        altpayload["metrics"]["name"] = "temperature";
-        altpayload["value"] = 25; // function do do
-
-        string publish_payload = altpayload.dump(4);
-        client.publish(topic, publish_payload.data(), publish_payload.size(), 0, false);
-        client.disconnect()->wait();
-
-
+            string publish_payload = altpayload.dump(4); // Convert payload to string and set json tabs
+            client.publish(topic, publish_payload.data(), publish_payload.size(), 0, false);
+            //client.disconnect()->wait();
+            this_thread::sleep_for(chrono::seconds(2));
+        }
+        
     } catch (const mqtt::exception& exc) {
         cerr << "Error: " << exc.what() << endl;
     }
