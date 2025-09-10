@@ -1,14 +1,15 @@
 #include <mqtt/async_client.h>
 #include <string>
 #include <iostream>
+using namespace std;
 
-const std::string SERVER_ADDRESS("tcp://localhost:1883");
-const std::string CLIENT_ID("cpp_test_subscriber");
-const std::string TOPIC("spBv1.0/officeb/DDATA/ventilationchamber2/olimextemp");
+const string SERVER_ADDRESS("tcp://localhost:1883");
+const string CLIENT_ID("cpp_test_subscriber");
+const string TOPIC("spBv1.0/officeb/DDATA/ventchamber2/temp1");
 
 class callback : public virtual mqtt::callback {
     void message_arrived(mqtt::const_message_ptr msg) override {
-        std::cout << "Message received: " << msg->get_payload_str() << std::endl;
+        cout << "Message received: " << msg->get_payload_str() << endl;
     }
 };
 
@@ -24,21 +25,21 @@ int main() {
     try {
         // Connect to EMQX broker
         client.connect(connOpts)->wait();
-        std::cout << "Connected to EMQX broker" << std::endl;
+        cout << "Connected to EMQX broker" << endl;
 
         // Subscribe to topic
         client.subscribe(TOPIC, 1)->wait();
-        std::cout << "Subscribed to topic: " << TOPIC << std::endl;
+        cout << "Subscribed to topic: " << TOPIC << endl;
 
         // Keep running to receive messages
-        std::cout << "Press Enter to exit..." << std::endl;
-        std::cin.get();
+        cout << "Press Enter to exit..." << endl;
+        cin.get();
 
         // Disconnect
         client.disconnect()->wait();
-        std::cout << "Disconnected" << std::endl;
+        cout << "Disconnected" << endl;
     } catch (const mqtt::exception& exc) {
-        std::cerr << "Error: " << exc.what() << std::endl;
+        cerr << "Error: " << exc.what() << endl;
         return 1;
     }
 
