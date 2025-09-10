@@ -42,17 +42,23 @@ int main() {
         // Create JSON payload written in raw JSON
         json jsonpayload = json::parse(R"(
                                    {
-                                      "timestamp": 1486144502122,
-                                      "metrics": [{
-                                      "name": "temperature",
-                                      "alias": 1,
-                                      "timestamp": 1479123452194,
-                                      "dataType": "integer",
-                                      "value": "25.5"
-                                   }],
-                                      "seq": 2
-                                   }
-                                   )");
+                                    "timestamp": 1486144502122,
+                                    "metrics": [{
+                                        "name": "temperature",
+                                        "alias": 1,
+                                        "timestamp": 1479123452194,
+                                        "dataType": "integer",
+                                        "value": "25.5"
+                                    }, {
+                                        "name": "temperature", 
+                                        "alias": 2,
+                                        "timestamp": 1479123452196,
+                                        "dataType": "integer",
+                                        "value": "22"
+                                    }],
+                                    "seq": 2
+                                    }
+                                    )");
         // Convert JSON payload to string
         string payload = jsonpayload.dump(4);
         //client.publish(topic, payload.data(), payload.size(), 0, false);
@@ -63,10 +69,19 @@ int main() {
         time_t sendTime = time(nullptr);
         
         while (client.is_connected()){
-            altpayload["timestamp"] = sendTime;
-            altpayload["metrics"]["timestamp"] = sampleTime(); // function to do
-            altpayload["metrics"]["name"] = "temperature";
-            altpayload["value"] = 24; // function do do
+            altpayload["timestamp"] = sendTime; // create function getSendTime
+
+            //Sensor1
+            altpayload["metrics"]["Sensor1"]["timestamp"] = sampleTime(); // function to do
+            altpayload["metrics"]["Sensor1"]["name"] = "temperature1";
+            altpayload["metrics"]["Sensor1"]["value"] = 24; // function do do
+
+            //Sensor2
+            altpayload["metrics"]["Sensor2"]["timestamp"] = sampleTime();
+            altpayload["metrics"]["Sensor2"]["name"] = "temperature2";
+            altpayload["metrics"]["Sensor2"]["value"] = 22; // function do do
+            
+            
             altpayload["seq"] = msgSeq();
 
             string publish_payload = altpayload.dump(4); // Convert payload to string and set json tabs
