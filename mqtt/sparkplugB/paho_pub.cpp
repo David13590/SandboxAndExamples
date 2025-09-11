@@ -64,31 +64,106 @@ int main() {
         //client.publish(topic, payload.data(), payload.size(), 0, false);
         //cout << "Message published!" << endl;
 
-        // You can also construct the JSON object sequentially
-        json altpayload; // empty JSON structure 
-        time_t sendTime = time(nullptr);
+        // Create empty json stucts to send
+        json temp_nbirth;
+        json temp_payload; // empty JSON structure 
+        json temp_ndeath;
         
+
+
+        // Parse and send nbirth once
+        temp_nbirth["timestamp"] = sampleTime();
+
+        //Node Controls
+        temp_nbirth["metrics"][0]["name"] = "bdSeq";
+        temp_nbirth["metrics"][0]["timestamp"] = sampleTime();
+        temp_nbirth["metrics"][0]["dataType"] = "Int64";
+        temp_nbirth["metrics"][0]["value"] = 0;
+
+        temp_nbirth["metrics"][1]["name"] = "Reboot";
+        temp_nbirth["metrics"][1]["timestamp"] = sampleTime();
+        temp_nbirth["metrics"][1]["dataType"] = "Boolean";
+        temp_nbirth["metrics"][1]["value"] = "false";
+
+        temp_nbirth["metrics"][1]["name"] = "Poll rate";
+        temp_nbirth["metrics"][1]["timestamp"] = sampleTime();
+        temp_nbirth["metrics"][1]["dataType"] = "Int64";
+        temp_nbirth["metrics"][1]["value"] = 2;
+
+
+        //Proterties
+        temp_nbirth["metrics"][8]["name"] = "";
+        temp_nbirth["metrics"][8]["timestamp"] = sampleTime();
+        temp_nbirth["metrics"][8]["dataType"] = "Int64";
+        temp_nbirth["metrics"][8]["value"] = 0;
+
+
+        json temp_nbirth = json::parse(R"(
+            {
+            "timestamp": 1486144502122,
+            "metrics": [{
+                "name": "bdSeq",
+                "timestamp": 1486144502122,
+                "dataType": "Int64",
+                "value": 0
+            }, {
+                "name": "Node Control/",
+                "timestamp": 1486144502122,
+                "dataType": "Int64",
+                "value": 3000
+            }, {
+                "name": "Properties/Hardware Make",
+                "timestamp": 1486144502122,
+                "dataType": "String",
+                "value": "Opto22 Groov EPIC"
+            }, {
+                "name": "Inputs/Temperature",
+                "timestamp": 1486144502122,
+                "dataType": "Float",
+                "value": 25.6
+            }, {
+                "name": "Inputs/Humidity",
+                "timestamp": 1486144502122,
+                "dataType": "Float",
+                "value": 67.8
+            }, {
+                "name": "Outputs/Pump",
+                "timestamp": 1486144502122,
+                "dataType": "Boolean",
+                "value": true
+            }],
+            "seq": 0
+            }
+            
+            
+            )");
+        
+
+        time_t sendTime = time(nullptr);
         while (client.is_connected()){
-            altpayload["timestamp"] = sendTime; // create function getSendTime
+            temp_payload["timestamp"] = sendTime; // create function getSendTime
 
             //Sensor1
-            altpayload["metrics"]["Sensor1"]["timestamp"] = sampleTime(); // function to do
-            altpayload["metrics"]["Sensor1"]["name"] = "temperature1";
-            altpayload["metrics"]["Sensor1"]["value"] = 24; // function do do
+            temp_payload["metrics"]["Sensor1"]["timestamp"] = sampleTime(); // function to do
+            temp_payload["metrics"]["Sensor1"]["name"] = "temperature1";
+            temp_payload["metrics"]["Sensor1"]["value"] = 21; // function do do
 
             //Sensor2
-            altpayload["metrics"]["Sensor2"]["timestamp"] = sampleTime();
-            altpayload["metrics"]["Sensor2"]["name"] = "temperature2";
-            altpayload["metrics"]["Sensor2"]["value"] = 22; // function do do
+            temp_payload["metrics"]["Sensor2"]["timestamp"] = sampleTime();
+            temp_payload["metrics"]["Sensor2"]["name"] = "temperature2";
+            temp_payload["metrics"]["Sensor2"]["value"] = 22; // function do do
             
             
-            altpayload["seq"] = msgSeq();
+            temp_payload["seq"] = msgSeq();
 
-            string publish_payload = altpayload.dump(4); // Convert payload to string and set json tabs
+            string publish_payload = temp_payload.dump(4); // Convert payload to string and set json tabs
             client.publish(topic, publish_payload.data(), publish_payload.size(), 0, false);
             //client.disconnect()->wait();
             this_thread::sleep_for(chrono::seconds(2));
         }
+
+        //send ndeath once on exit
+
         
     } catch (const mqtt::exception& exc) {
         cerr << "Error: " << exc.what() << endl;
