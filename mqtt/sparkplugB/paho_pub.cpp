@@ -65,37 +65,37 @@ int main() {
         //cout << "Message published!" << endl;
 
         // Create empty json stucts to send
-        json temp_nbirth;
+        //json temp_nbirth;
         json temp_payload; // empty JSON structure 
         json temp_ndeath;
         
 
 
         // Parse and send nbirth once
-        temp_nbirth["timestamp"] = sampleTime();
+        // temp_nbirth["timestamp"] = sampleTime();
 
-        //Node Controls
-        temp_nbirth["metrics"][0]["name"] = "bdSeq";
-        temp_nbirth["metrics"][0]["timestamp"] = sampleTime();
-        temp_nbirth["metrics"][0]["dataType"] = "Int64";
-        temp_nbirth["metrics"][0]["value"] = 0;
+        // //Node Controls
+        // temp_nbirth["metrics"][0]["name"] = "bdSeq";
+        // temp_nbirth["metrics"][0]["timestamp"] = sampleTime();
+        // temp_nbirth["metrics"][0]["dataType"] = "Int64";
+        // temp_nbirth["metrics"][0]["value"] = 0;
 
-        temp_nbirth["metrics"][1]["name"] = "Reboot";
-        temp_nbirth["metrics"][1]["timestamp"] = sampleTime();
-        temp_nbirth["metrics"][1]["dataType"] = "Boolean";
-        temp_nbirth["metrics"][1]["value"] = "false";
+        // temp_nbirth["metrics"][1]["name"] = "Reboot";
+        // temp_nbirth["metrics"][1]["timestamp"] = sampleTime();
+        // temp_nbirth["metrics"][1]["dataType"] = "Boolean";
+        // temp_nbirth["metrics"][1]["value"] = "false";
 
-        temp_nbirth["metrics"][1]["name"] = "Poll rate";
-        temp_nbirth["metrics"][1]["timestamp"] = sampleTime();
-        temp_nbirth["metrics"][1]["dataType"] = "Int64";
-        temp_nbirth["metrics"][1]["value"] = 2;
+        // temp_nbirth["metrics"][2]["name"] = "Poll rate";
+        // temp_nbirth["metrics"][2]["timestamp"] = sampleTime();
+        // temp_nbirth["metrics"][2]["dataType"] = "Int64";
+        // temp_nbirth["metrics"][2]["value"] = 2;
 
 
-        //Proterties
-        temp_nbirth["metrics"][8]["name"] = "";
-        temp_nbirth["metrics"][8]["timestamp"] = sampleTime();
-        temp_nbirth["metrics"][8]["dataType"] = "Int64";
-        temp_nbirth["metrics"][8]["value"] = 0;
+        // //Proterties
+        // temp_nbirth["metrics"][8]["name"] = "";
+        // temp_nbirth["metrics"][8]["timestamp"] = sampleTime();
+        // temp_nbirth["metrics"][8]["dataType"] = "Int64";
+        // temp_nbirth["metrics"][8]["value"] = 0;
 
 
         json temp_nbirth = json::parse(R"(
@@ -134,9 +134,21 @@ int main() {
             }],
             "seq": 0
             }
-            
-            
             )");
+
+        auto _key = (temp_nbirth.begin()+1).key(); // Get element iterators
+        auto _value = (temp_nbirth.begin()+1).value();
+        json iterator_keys;
+        iterator_keys["Iterator keys"]["key"] = _key;
+        iterator_keys["Iterator keys"]["value"] = _value;
+
+        // Puhlish once
+        string iterator_keys_payload = iterator_keys.dump(4);
+        client.publish(topic, iterator_keys_payload.data(), iterator_keys_payload.size(), 0, false);
+        
+        string temp_nbirth_payload = temp_nbirth.dump(4);
+        client.publish(topic, temp_nbirth_payload.data(), temp_nbirth_payload.size(), 0, false); // Publish nbirth once
+        
         
 
         time_t sendTime = time(nullptr);
@@ -144,18 +156,18 @@ int main() {
             temp_payload["timestamp"] = sendTime; // create function getSendTime
 
             //Sensor1
-            temp_payload["metrics"]["Sensor1"]["timestamp"] = sampleTime(); // function to do
-            temp_payload["metrics"]["Sensor1"]["name"] = "temperature1";
-            temp_payload["metrics"]["Sensor1"]["value"] = 21; // function do do
+            temp_payload["metrics"]["timestamp"] = sampleTime(); // function to do
+            temp_payload["metrics"]["name"] = "temperature1";
+            temp_payload["metrics"]["value"] = 21; // function do do
 
             //Sensor2
-            temp_payload["metrics"]["Sensor2"]["timestamp"] = sampleTime();
-            temp_payload["metrics"]["Sensor2"]["name"] = "temperature2";
-            temp_payload["metrics"]["Sensor2"]["value"] = 22; // function do do
-            
+            temp_payload["metrics"]["timestamp"] = sampleTime();
+            temp_payload["metrics"]["name"] = "temperature2";
+            temp_payload["metrics"]["value"] = 22; // function do do
             
             temp_payload["seq"] = msgSeq();
 
+            
             string publish_payload = temp_payload.dump(4); // Convert payload to string and set json tabs
             client.publish(topic, publish_payload.data(), publish_payload.size(), 0, false);
             //client.disconnect()->wait();
