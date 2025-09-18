@@ -4,9 +4,14 @@
 #include <string>
 #include <ctime>
 #include <nlohmann/json.hpp>
+#include "json_structure.cpp"
 
 using namespace std;
 using json = nlohmann::json;
+
+int loop_count = 0;
+int birth_initial_seq = 0;
+
 const string SERVER_ADDRESS("tcp://localhost:1883");
 const string CLIENT_ID("test_publisher");
 
@@ -28,7 +33,6 @@ unsigned long msgSeq(){
 }
 
 int main() {
-
     mqtt::async_client client(SERVER_ADDRESS, CLIENT_ID);
     mqtt::connect_options connOpts;
     connOpts.set_clean_session(true);
@@ -36,142 +40,64 @@ int main() {
     try {
         client.connect(connOpts)->wait();
         cout << "Connected to the MQTT broker!" << endl;
-        
-        // Follow topic structure of Sparkplug B version 1.0
+            //        namespace/group_id/message_type/edge_node_id/[device_id]
         const string topic("spBv1.0/officeb/DDATA/ventchamber2/temp1");
-        // Create JSON payload written in raw JSON
-        json jsonpayload = json::parse(R"(
-                                   {
-                                    "timestamp": 1486144502122,
-                                    "metrics": [{
-                                        "name": "temperature",
-                                        "alias": 1,
-                                        "timestamp": 1479123452194,
-                                        "dataType": "integer",
-                                        "value": "25.5"
-                                    }, {
-                                        "name": "temperature", 
-                                        "alias": 2,
-                                        "timestamp": 1479123452196,
-                                        "dataType": "integer",
-                                        "value": "22"
-                                    }],
-                                    "seq": 2
-                                    }
-                                    )");
-        // Convert JSON payload to string
-        string payload = jsonpayload.dump(4);
-        //client.publish(topic, payload.data(), payload.size(), 0, false);
-        //cout << "Message published!" << endl;
+        cout << "Message published!" << endl;
 
-        // Create empty json stucts to send
-        //json temp_nbirth;
-        json temp_payload; // empty JSON structure 
-        json temp_ndeath;
+        // Initial struct values - sensor1
+        json sensor1_nbirth = sensor_nbirth_struct;
+        json sensor1_payload = sensor_DDATA_struct;
+        json sensor1_ndeath = sensor_ndeath_struct;    
         
+        // Set nbirth values and publish once on start
+        sensor1_nbirth.at("timestamp") = sampleTime();
+        //bdSeq
+        sensor1_nbirth.at("metrics").at(0).at("timestamp") = sampleTime();
+        sensor1_nbirth.at("metrics").at(0).at("value") = 
+        //Reboot
+        sensor1_nbirth.at("metrics").at(1).at("timestamp") = sampleTime();
+        sensor1_nbirth.at("metrics").at(1).at("value") = 
+        //Pool rate
+        sensor1_nbirth.at("metrics").at(2).at("timestamp") = sampleTime();
+        sensor1_nbirth.at("metrics").at(2).at("value") = 
+        //Inputs/Temperature1
+        sensor1_nbirth.at("metrics").at(3).at("timestamp") = sampleTime();
+        sensor1_nbirth.at("metrics").at(3).at("value") = 
+        //Inputs/Temperature2
+        sensor1_nbirth.at("metrics").at(4).at("timestamp") = sampleTime();
+        sensor1_nbirth.at("metrics").at(4).at("value") = 
 
+        sensor1_nbirth.at("seq") = birth_initial_seq;
 
-        // Parse and send nbirth once
-        // temp_nbirth["timestamp"] = sampleTime();
-
-        // //Node Controls
-        // temp_nbirth["metrics"][0]["name"] = "bdSeq";
-        // temp_nbirth["metrics"][0]["timestamp"] = sampleTime();
-        // temp_nbirth["metrics"][0]["dataType"] = "Int64";
-        // temp_nbirth["metrics"][0]["value"] = 0;
-
-        // temp_nbirth["metrics"][1]["name"] = "Reboot";
-        // temp_nbirth["metrics"][1]["timestamp"] = sampleTime();
-        // temp_nbirth["metrics"][1]["dataType"] = "Boolean";
-        // temp_nbirth["metrics"][1]["value"] = "false";
-
-        // temp_nbirth["metrics"][2]["name"] = "Poll rate";
-        // temp_nbirth["metrics"][2]["timestamp"] = sampleTime();
-        // temp_nbirth["metrics"][2]["dataType"] = "Int64";
-        // temp_nbirth["metrics"][2]["value"] = 2;
-
-
-        // //Proterties
-        // temp_nbirth["metrics"][8]["name"] = "";
-        // temp_nbirth["metrics"][8]["timestamp"] = sampleTime();
-        // temp_nbirth["metrics"][8]["dataType"] = "Int64";
-        // temp_nbirth["metrics"][8]["value"] = 0;
-
-
-        json temp_nbirth = json::parse(R"(
-            {
-            "timestamp": 1486144502122,
-            "metrics": [{
-                "name": "bdSeq",
-                "timestamp": 1486144502122,
-                "dataType": "Int64",
-                "value": 0
-            }, {
-                "name": "Node Control/",
-                "timestamp": 1486144502122,
-                "dataType": "Int64",
-                "value": 3000
-            }, {
-                "name": "Properties/Hardware Make",
-                "timestamp": 1486144502122,
-                "dataType": "String",
-                "value": "Opto22 Groov EPIC"
-            }, {
-                "name": "Inputs/Temperature",
-                "timestamp": 1486144502122,
-                "dataType": "Float",
-                "value": 25.6
-            }, {
-                "name": "Inputs/Humidity",
-                "timestamp": 1486144502122,
-                "dataType": "Float",
-                "value": 67.8
-            }, {
-                "name": "Outputs/Pump",
-                "timestamp": 1486144502122,
-                "dataType": "Boolean",
-                "value": true
-            }],
-            "seq": 0
-            }
-            )");
-
-        auto _key = (temp_nbirth.begin()+1).key(); // Get element iterators
-        auto _value = (temp_nbirth.begin()+1).value();
-        json iterator_keys;
-        iterator_keys["Iterator keys"]["key"] = _key;
-        iterator_keys["Iterator keys"]["value"] = _value;
-
-        // Puhlish once
-        string iterator_keys_payload = iterator_keys.dump(4);
-        client.publish(topic, iterator_keys_payload.data(), iterator_keys_payload.size(), 0, false);
+        string sensor1_nbirth_payload = sensor1_nbirth.dump(4);
+        client.publish(topic, sensor1_nbirth_payload.data(), sensor1_nbirth_payload.size(), 0, false);
         
-        string temp_nbirth_payload = temp_nbirth.dump(4);
-        client.publish(topic, temp_nbirth_payload.data(), temp_nbirth_payload.size(), 0, false); // Publish nbirth once
-        
-        
+        auto nodeCTRL = sensor1_nbirth.at("metrics").at(1).at("value");
+        string nodeCTRL_payload = nodeCTRL.dump(4);
+        client.publish(topic, nodeCTRL_payload.data(), nodeCTRL_payload.size(), 0, false);
 
         time_t sendTime = time(nullptr);
-        while (client.is_connected()){
-            temp_payload["timestamp"] = sendTime; // create function getSendTime
+        while (client.is_connected() && loop_count){
+            sensor1_payload["timestamp"] = sendTime; // create function getSendTime
 
             //Sensor1
-            temp_payload["metrics"]["timestamp"] = sampleTime(); // function to do
-            temp_payload["metrics"]["name"] = "temperature1";
-            temp_payload["metrics"]["value"] = 21; // function do do
+            sensor1_payload["metrics"]["timestamp"] = sampleTime(); // function to do
+            sensor1_payload["metrics"]["name"] = "temperature1";
+            sensor1_payload["metrics"]["value"] = 21; // function do do
 
             //Sensor2
-            temp_payload["metrics"]["timestamp"] = sampleTime();
-            temp_payload["metrics"]["name"] = "temperature2";
-            temp_payload["metrics"]["value"] = 22; // function do do
+            sensor1_payload.at("metrics").at(1).at("timestamp") = sampleTime();
+            sensor1_payload.at("metrics").at(1).at("name") = "temperature2";
+            sensor1_payload.at("metrics").at(1).at("value") = 22; // function do do
             
-            temp_payload["seq"] = msgSeq();
+            sensor1_payload["seq"] = msgSeq();
 
             
-            string publish_payload = temp_payload.dump(4); // Convert payload to string and set json tabs
-            client.publish(topic, publish_payload.data(), publish_payload.size(), 0, false);
+            string sensor1_publish_payload = sensor1_payload.dump(4); // Convert payload to string and set json tabs
+            client.publish(topic, sensor1_publish_payload.data(), sensor1_publish_payload.size(), 0, false);
             //client.disconnect()->wait();
             this_thread::sleep_for(chrono::seconds(2));
+
         }
 
         //send ndeath once on exit
