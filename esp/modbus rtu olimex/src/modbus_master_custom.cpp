@@ -1,4 +1,5 @@
 #include <ModbusMaster.h>
+#include "VentSystemRegisters.h"
 
 // ================ MODBUS COMMUNICATION CONFIGURATION ================
 #define RX_PIN 36           // UART2 RX pin
@@ -10,8 +11,8 @@
 #define MODBUS_SLAVE_ID2 2
 
 // ================ DATA BUFFERS ================
-uint16_t holdingRegs[2];    // Buffer for holding registers (writable)
-uint16_t inputRegs[2];      // Buffer for input registers (read-only)
+uint16_t holdingRegs[10];    // Buffer for holding registers (writable)
+uint16_t inputRegs[10];      // Buffer for input registers (read-only)
 bool discreteInputs[2];     // Buffer for discrete inputs (binary status)
 char frontDoorStatus[10];   // Human-readable front door status
 char backDoorStatus[10];    // Human-readable back door status
@@ -35,15 +36,28 @@ void postTransmission() {
 //    readHoldingRegisters();
 //}
 
-void readHoldingRegisters(){
-    auto HoldingRegResult = modbus.readHoldingRegisters(0x2012, 1);
+void readHoldingRegisters(int hRegToRead){
+    auto HoldingRegResult = modbus.readHoldingRegisters(hRegToRead, 1);
     if(0==HoldingRegResult){
         holdingRegs[0] = modbus.getResponseBuffer(0);
         Serial.println(holdingRegs[0]);
     }
     else{
-      Serial.print("Could not read Holding register!");
+      Serial.println("Error reading: Holding register");
     }
+    modbus.clearResponseBuffer();
+}
+
+void readInputRegisters(int iRegToRead){
+  auto InputRegResult = modbus.readInputRegisters(iRegToRead, 1);
+  if(0==InputRegResult){
+        inputRegs[0] = modbus.getResponseBuffer(0);
+        Serial.println(inputRegs[0]);
+    }
+    else{
+      Serial.println("Error reading: Input register");
+    }
+    modbus.clearResponseBuffer();
 }
 
 void setup() {
@@ -73,13 +87,17 @@ void setup() {
 
 void loop() {
   // Perform Modbus read and write operations
-  readHoldingRegisters();
+  readInputRegisters(getOutdoorTemp);
+  readInputRegisters(runMode);
+  readInputRegisters(extractAirTemp);
+  readInputRegisters(roomTemp1);
+  readInputRegisters(roomTemp2);
+
+  readHoldingRegisters(fanMode);
+  Serial.println("");
   //writeHoldingRegisters();
-
-  // Add diagnostic separator for readability
-  //Serial.println("----------------------------");
-
+  
   // Delay between communication cycles to prevent overwhelming the bus
   modbus.clearResponseBuffer();
-  delay(2000);  // 2-second interval
+  delay(2000);
 }
