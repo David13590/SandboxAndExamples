@@ -30,16 +30,11 @@ void postTransmission() {
   digitalWrite(MAX485_DE, LOW);       // Disable driver
 }
 
-//void getVentSystemMode(){
-//    readHoldingRegisters();
-//}
-
 void readHoldingRegisters(int hRegToRead, int hRegBufferNumber){
     auto HoldingRegResult = modbus.readHoldingRegisters(hRegToRead, 1);
     if(0==HoldingRegResult){
         holdingRegsBuffer[hRegBufferNumber] = modbus.getResponseBuffer(1)<<8;
         holdingRegsBuffer[hRegBufferNumber] += modbus.getResponseBuffer(0);
-        //Serial.println(holdingRegsBuffer[hRegbufferNumber]);
     }
     else{
       Serial.println("Error reading: Holding register");
@@ -51,7 +46,6 @@ void readInputRegisters(int iRegToRead, int iRegBufferNumber){
   if(0==InputRegResult){
         inputRegsBuffer[iRegBufferNumber] = modbus.getResponseBuffer(1)<<8;
         inputRegsBuffer[iRegBufferNumber] += modbus.getResponseBuffer(0);
-        //Serial.println(inputRegsBuffer[iRegBufferNumber]);
     }
     else{
       Serial.println("Error reading: Input register");
@@ -93,14 +87,6 @@ void loop() {
 
   readHoldingRegisters(fanMode, 0);
 
-  // Loop over buffers to print
-  // for(int arrayEntries : inputRegsBuffer){
-  //   Serial.print(arrayEntries);
-  // }
-
-  // for(int arrayEntries : holdingRegsBuffer){
-  //   Serial.println(arrayEntries);
-  // }
   for(int arrayEntries = 0; arrayEntries < 5; arrayEntries++){
     Serial.println(inputRegsBuffer[arrayEntries]);
   }
@@ -108,8 +94,6 @@ void loop() {
   for(int arrayEntries = 0; arrayEntries < 5; arrayEntries++){
     Serial.println(holdingRegsBuffer[arrayEntries]);
   }
-
-  //writeHoldingRegisters();
   
   // Delay between communication cycles to prevent overwhelming the bus
   delay(2000);
