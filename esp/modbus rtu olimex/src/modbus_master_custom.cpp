@@ -34,12 +34,11 @@ void postTransmission() {
 //    readHoldingRegisters();
 //}
 
-void readHoldingRegisters(int hRegToRead, int hRegbufferNumber){
+void readHoldingRegisters(int hRegToRead, int hRegBufferNumber){
     auto HoldingRegResult = modbus.readHoldingRegisters(hRegToRead, 1);
     if(0==HoldingRegResult){
-        holdingRegsBuffer[hRegbufferNumber] = modbus.getResponseBuffer(1)<<8;
-        holdingRegsBuffer[hRegbufferNumber] += modbus.getResponseBuffer(0);
-
+        holdingRegsBuffer[hRegBufferNumber] = modbus.getResponseBuffer(1)<<8;
+        holdingRegsBuffer[hRegBufferNumber] += modbus.getResponseBuffer(0);
         //Serial.println(holdingRegsBuffer[hRegbufferNumber]);
     }
     else{
@@ -50,7 +49,8 @@ void readHoldingRegisters(int hRegToRead, int hRegbufferNumber){
 void readInputRegisters(int iRegToRead, int iRegBufferNumber){
   auto InputRegResult = modbus.readInputRegisters(iRegToRead, 1);
   if(0==InputRegResult){
-        inputRegsBuffer[iRegBufferNumber] = modbus.getResponseBuffer(iRegBufferNumber);
+        inputRegsBuffer[iRegBufferNumber] = modbus.getResponseBuffer(1)<<8;
+        inputRegsBuffer[iRegBufferNumber] += modbus.getResponseBuffer(0);
         //Serial.println(inputRegsBuffer[iRegBufferNumber]);
     }
     else{
@@ -85,11 +85,11 @@ void setup() {
 
 void loop() {
   // Perform Modbus read and write operations
-  //readInputRegisters(getOutdoorTemp, 0);
-  //readInputRegisters(runMode, 1);
-  //readInputRegisters(extractAirTemp, 2);
-  //readInputRegisters(roomTemp1, 3);
-  //readInputRegisters(roomTemp2, 4);
+  readInputRegisters(getOutdoorTemp, 0);
+  readInputRegisters(runMode, 1);
+  readInputRegisters(extractAirTemp, 2);
+  readInputRegisters(roomTemp1, 3);
+  readInputRegisters(roomTemp2, 4);
 
   readHoldingRegisters(fanMode, 0);
 
@@ -101,6 +101,9 @@ void loop() {
   // for(int arrayEntries : holdingRegsBuffer){
   //   Serial.println(arrayEntries);
   // }
+  for(int arrayEntries = 0; arrayEntries < 5; arrayEntries++){
+    Serial.println(inputRegsBuffer[arrayEntries]);
+  }
 
   for(int arrayEntries = 0; arrayEntries < 5; arrayEntries++){
     Serial.println(holdingRegsBuffer[arrayEntries]);
