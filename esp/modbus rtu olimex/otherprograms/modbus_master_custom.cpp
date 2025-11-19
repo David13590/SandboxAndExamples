@@ -1,5 +1,5 @@
 #include <ModbusMaster.h>
-#include "VentSystemRegisters.h"
+#include "VentSystemRegisters.hpp"
 
 // ================ MODBUS COMMUNICATION CONFIGURATION ================
 #define RX_PIN 36           // UART2 RX pin
@@ -11,8 +11,8 @@
 #define MODBUS_SLAVE_ID2 2
 
 // ================ DATA BUFFERS ================
-const int sizeOfInputRegisterBuffer = sizeof(inputRegisterList)/sizeof(inputRegisterList.getOutdoorTemp); // Get size of inputRegisterList
-const int sizeOfHoldingRegisterBuffer = sizeof(holdingRegisterList)/sizeof(holdingRegisterList.fanMode);
+const int sizeOfInputRegisterBuffer = sizeof(inputRegisterList)/sizeof(inputRegisterList[0]); // Get size of inputRegisterList
+const int sizeOfHoldingRegisterBuffer = sizeof(holdingRegisterList)/sizeof(holdingRegisterList[0]);
 uint16_t holdingRegsBuffer[sizeOfHoldingRegisterBuffer];  // Buffer for holding registers (writable)
 uint16_t inputRegsBuffer[sizeOfInputRegisterBuffer];      // Buffer for input registers (read-only)
 bool discreteInputsBuffer[2];     // Buffer for discrete inputs (binary status)
@@ -53,9 +53,11 @@ void readInputRegisters(int iRegToRead, int iRegBufferNumber){
       Serial.println("Error reading: Input register");
     }
 }
-void getStructMemberPositions(){
-  offsetof(structInputRegisterList, getOutdoorTemp);
-}
+// void getRegisterMemberIndex(structInputRegisterList *inputRegisterList, char* registerName){
+//   inputRegisterList->roomTemp1 = 7;
+  
+//   //offsetof(structInputRegisterList, registerName);
+// }
 
 // getAirUnitMode(){
 //   switch (){
@@ -101,13 +103,13 @@ void setup() {
 
 void loop() {
   // Perform Modbus read and write operations
-  readInputRegisters(inputRegisterList.getOutdoorTemp, inputRegEntry0);
-  readInputRegisters(inputRegisterList.runMode, inputRegEntry1);
-  readInputRegisters(inputRegisterList.extractAirTemp, inputRegEntry2);
-  readInputRegisters(inputRegisterList.roomTemp1, inputRegEntry3);
-  readInputRegisters(inputRegisterList.roomTemp2, inputRegEntry4);
+  readInputRegisters(inputRegisterList[0].reg.modbusAddress, 0);
+  readInputRegisters(inputRegisterList[1].reg.modbusAddress, 1);
+  readInputRegisters(inputRegisterList[2].reg.modbusAddress, 2);
+  readInputRegisters(inputRegisterList[3].reg.modbusAddress, 3);
+  readInputRegisters(inputRegisterList[4].reg.modbusAddress, 4);
 
-  readHoldingRegisters(holdingRegisterList.fanMode, hRegEntry0);
+  readHoldingRegisters(holdingRegisterList[0].reg.modbusAddress, 0);
   
   for(int inputRegisterEntries = 0; inputRegisterEntries < sizeOfInputRegisterBuffer; inputRegisterEntries++){
     Serial.println(inputRegsBuffer[inputRegisterEntries]);
@@ -116,7 +118,8 @@ void loop() {
   for(int holdingRegisterEntries = 0; holdingRegisterEntries < sizeOfHoldingRegisterBuffer; holdingRegisterEntries++){
     Serial.println(holdingRegsBuffer[holdingRegisterEntries]);
   }
-  
+  Serial.println("------------");
+
   // Delay between communication cycles to prevent overwhelming the bus
   delay(2000);
   modbus.clearResponseBuffer();
