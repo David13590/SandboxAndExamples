@@ -30,14 +30,14 @@ void setup() {
   
   //Add Registers
   //InputReg
-  mb.addIreg(getOutdoorTemp, 8);
-  mb.addIreg(runMode, 5);
-  mb.addIreg(extractAirTemp, 19);
-  mb.addIreg(roomTemp1, 25);
-  mb.addIreg(roomTemp2, 31);
+  mb.addIreg(inputRegisterList.getOutdoorTemp, 8);
+  mb.addIreg(inputRegisterList.runMode, 5);
+  mb.addIreg(inputRegisterList.extractAirTemp, 19);
+  mb.addIreg(inputRegisterList.roomTemp1, 25);
+  mb.addIreg(inputRegisterList.roomTemp2, 31);
   
   //Hreg
-  mb.addHreg(fanMode, 3);
+  mb.addHreg(holdingRegisterList.fanMode, 3);
   
   //Test Hreg
   mb.addHreg(REGN);

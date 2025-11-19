@@ -11,8 +11,10 @@
 #define MODBUS_SLAVE_ID2 2
 
 // ================ DATA BUFFERS ================
-uint16_t holdingRegsBuffer[5];    // Buffer for holding registers (writable)
-uint16_t inputRegsBuffer[5];      // Buffer for input registers (read-only)
+const int sizeOfInputRegisterBuffer = sizeof(inputRegisterList)/sizeof(inputRegisterList.getOutdoorTemp); // Get size of inputRegisterList
+const int sizeOfHoldingRegisterBuffer = sizeof(holdingRegisterList)/sizeof(holdingRegisterList.fanMode);
+uint16_t holdingRegsBuffer[sizeOfHoldingRegisterBuffer];  // Buffer for holding registers (writable)
+uint16_t inputRegsBuffer[sizeOfInputRegisterBuffer];      // Buffer for input registers (read-only)
 bool discreteInputsBuffer[2];     // Buffer for discrete inputs (binary status)
 
 // Create Modbus master object
@@ -33,8 +35,8 @@ void postTransmission() {
 void readHoldingRegisters(int hRegToRead, int hRegBufferNumber){
     auto HoldingRegResult = modbus.readHoldingRegisters(hRegToRead, 1);
     if(0==HoldingRegResult){
-        holdingRegsBuffer[hRegBufferNumber] = modbus.getResponseBuffer(1)<<8;
-        holdingRegsBuffer[hRegBufferNumber] += modbus.getResponseBuffer(0);
+        holdingRegsBuffer[hRegBufferNumber] = modbus.getResponseBuffer(1)<<8; // Bit shift 8-bit response buffer 8 left creating a 16-bit int.
+        holdingRegsBuffer[hRegBufferNumber] += modbus.getResponseBuffer(0);   // 
     }
     else{
       Serial.println("Error reading: Holding register");
@@ -51,6 +53,26 @@ void readInputRegisters(int iRegToRead, int iRegBufferNumber){
       Serial.println("Error reading: Input register");
     }
 }
+void getStructMemberPositions(){
+  offsetof(structInputRegisterList, getOutdoorTemp);
+}
+
+// getAirUnitMode(){
+//   switch (){
+//     case 0: "Stopped" break;
+//     case 1: "Starting up" break;
+//     case 2: "Starting reduced Speed" break;
+//     case 3: "Starting full speed" break;
+//     case 4: "Starting normal run" break;
+//     case 5: "Normal run" break;
+//     case 6: "Support control heating" break;
+//     case 7: "Support control cooling" break;
+//     case 8: "CO2 run" break;
+//     case 9: "Night cooling" break;
+//     case 10: "Full speed stop" break;
+//     case 11: "Stopping fan" break;
+//   };
+// }
 
 void setup() {
   // Initialize RS485 control pins
@@ -79,20 +101,20 @@ void setup() {
 
 void loop() {
   // Perform Modbus read and write operations
-  readInputRegisters(getOutdoorTemp, 0);
-  readInputRegisters(runMode, 1);
-  readInputRegisters(extractAirTemp, 2);
-  readInputRegisters(roomTemp1, 3);
-  readInputRegisters(roomTemp2, 4);
+  readInputRegisters(inputRegisterList.getOutdoorTemp, inputRegEntry0);
+  readInputRegisters(inputRegisterList.runMode, inputRegEntry1);
+  readInputRegisters(inputRegisterList.extractAirTemp, inputRegEntry2);
+  readInputRegisters(inputRegisterList.roomTemp1, inputRegEntry3);
+  readInputRegisters(inputRegisterList.roomTemp2, inputRegEntry4);
 
-  readHoldingRegisters(fanMode, 0);
-
-  for(int arrayEntries = 0; arrayEntries < 5; arrayEntries++){
-    Serial.println(inputRegsBuffer[arrayEntries]);
+  readHoldingRegisters(holdingRegisterList.fanMode, hRegEntry0);
+  
+  for(int inputRegisterEntries = 0; inputRegisterEntries < sizeOfInputRegisterBuffer; inputRegisterEntries++){
+    Serial.println(inputRegsBuffer[inputRegisterEntries]);
   }
 
-  for(int arrayEntries = 0; arrayEntries < 5; arrayEntries++){
-    Serial.println(holdingRegsBuffer[arrayEntries]);
+  for(int holdingRegisterEntries = 0; holdingRegisterEntries < sizeOfHoldingRegisterBuffer; holdingRegisterEntries++){
+    Serial.println(holdingRegsBuffer[holdingRegisterEntries]);
   }
   
   // Delay between communication cycles to prevent overwhelming the bus
