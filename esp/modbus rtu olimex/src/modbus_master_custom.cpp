@@ -53,28 +53,25 @@ void readInputRegisters(int iRegToRead, int iRegBufferNumber){
       Serial.println("Error reading: Input register");
     }
 }
-// void getRegisterMemberIndex(structInputRegisterList *inputRegisterList, char* registerName){
-//   inputRegisterList->roomTemp1 = 7;
-  
-//   //offsetof(structInputRegisterList, registerName);
-// }
 
-// getAirUnitMode(){
-//   switch (){
-//     case 0: "Stopped" break;
-//     case 1: "Starting up" break;
-//     case 2: "Starting reduced Speed" break;
-//     case 3: "Starting full speed" break;
-//     case 4: "Starting normal run" break;
-//     case 5: "Normal run" break;
-//     case 6: "Support control heating" break;
-//     case 7: "Support control cooling" break;
-//     case 8: "CO2 run" break;
-//     case 9: "Night cooling" break;
-//     case 10: "Full speed stop" break;
-//     case 11: "Stopping fan" break;
-//   };
-// }
+String airUnitRunModeString(int inputRegisterRunMode){
+  String caseReturn = "";
+  switch (inputRegisterRunMode){
+    case 0: caseReturn = "Stopped"; break;
+    case 1: caseReturn = "Starting up"; break;
+    case 2: caseReturn = "Starting reduced Speed"; break;
+    case 3: caseReturn = "Starting full speed"; break;
+    case 4: caseReturn = "Starting normal run"; break;
+    case 5: caseReturn = "Normal run"; break;
+    case 6: caseReturn = "Support control heating"; break;
+    case 7: caseReturn = "Support control cooling"; break;
+    case 8: caseReturn = "CO2 run"; break;
+    case 9: caseReturn = "Night cooling"; break;
+    case 10: caseReturn = "Full speed stop"; break;
+    case 11: caseReturn = "Stopping fan"; break;
+  };
+  return caseReturn;
+}
 
 void setup() {
   // Initialize RS485 control pins
@@ -112,7 +109,50 @@ void loop() {
   readHoldingRegisters(holdingRegisterList[0].reg.modbusAddress, 0);
   
   for(int inputRegisterEntries = 0; inputRegisterEntries < sizeOfInputRegisterBuffer; inputRegisterEntries++){
-    Serial.println(inputRegsBuffer[inputRegisterEntries]);
+    // if(inputRegisterEntries == 0){
+    //   delay(20);
+    //   Serial.println("OutdoorTemp: " + inputRegsBuffer[inputRegisterEntries]);
+    // }  
+    // else if(inputRegisterEntries == 1){
+    //   delay(20);
+    //   Serial.println("RunMode: " + inputRegsBuffer[inputRegisterEntries] + airUnitRunModeString(inputRegsBuffer[inputRegisterEntries]));
+    // }
+    // else if(inputRegisterEntries == 2){
+    //   delay(20);
+    //   Serial.println("extractedAirTemp: " + inputRegsBuffer[inputRegisterEntries]);
+    // }
+    // else if(inputRegisterEntries == 3){
+    //   delay(20);
+    //   Serial.println("roomTemp1: " + inputRegsBuffer[inputRegisterEntries]);
+    // }
+    // else if(inputRegisterEntries == 4){
+    //   delay(20);
+    //   Serial.println("roomTemp2: " + inputRegsBuffer[inputRegisterEntries]);
+    // }
+    // else{
+    //   delay(20);
+    //   Serial.println(inputRegsBuffer[inputRegisterEntries]);
+    // }
+        
+  
+    if(0==inputRegisterEntries){
+      Serial.print("OutdoorTemp: ");
+      Serial.print(inputRegsBuffer[inputRegisterEntries]);
+      Serial.println("°C");
+    }
+    if(1==inputRegisterEntries){
+      Serial.print("Runmode: ");
+      Serial.print(inputRegsBuffer[inputRegisterEntries]);
+      Serial.print(" ");
+      Serial.println(airUnitRunModeString(inputRegsBuffer[inputRegisterEntries]));
+    }
+    if(2==inputRegisterEntries){
+      Serial.print("extractAirTemp: ");
+      Serial.print(inputRegsBuffer[inputRegisterEntries]);
+      Serial.println("°C");
+    }
+    
+    
   }
 
   for(int holdingRegisterEntries = 0; holdingRegisterEntries < sizeOfHoldingRegisterBuffer; holdingRegisterEntries++){
