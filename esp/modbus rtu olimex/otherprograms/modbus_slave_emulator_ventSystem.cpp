@@ -31,13 +31,13 @@ void setup() {
   //Add Registers
   //InputReg
   mb.addIreg(inputRegisterList[0].reg.modbusAddress, 8);
-  mb.addIreg(inputRegisterList[1].reg.modbusAddress, 5);
+  mb.addIreg(inputRegisterList[1].reg.modbusAddress, 10);
   mb.addIreg(inputRegisterList[2].reg.modbusAddress, 19);
   mb.addIreg(inputRegisterList[3].reg.modbusAddress, 25);
   mb.addIreg(inputRegisterList[4].reg.modbusAddress, 31);
   
   //Hreg
-  mb.addHreg(holdingRegisterList[0].reg.modbusAddress, 3);
+  mb.addHreg(holdingRegisterList[0].reg.modbusAddress, 0);
 }
 
 void loop() {

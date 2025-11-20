@@ -31,7 +31,7 @@ modbusRegisterList inputRegisterList[] = { // Define stuct to store registers
 };
 
 modbusRegisterList holdingRegisterList[] = {
-    {{"fanMode", 367}, 0},
+    {{"manualAutoOnOFF", 367}, 0},
 };
 
 #endif

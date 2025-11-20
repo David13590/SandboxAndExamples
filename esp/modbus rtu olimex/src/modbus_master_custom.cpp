@@ -72,6 +72,16 @@ String airUnitRunModeString(int inputRegisterRunMode){
   };
   return caseReturn;
 }
+String airUnitOnOFFString(int holdingRegOnOffMode){
+  String caseReturn = "";
+  switch (holdingRegOnOffMode){
+    case 0: caseReturn = "Manual off"; break;
+    case 1: caseReturn = "Manual reduced speed"; break;
+    case 2: caseReturn = "Manual normal speed"; break;
+    case 3: caseReturn = "Auto"; break;
+  };
+  return caseReturn;
+}
 
 void setup() {
   // Initialize RS485 control pins
@@ -109,32 +119,6 @@ void loop() {
   readHoldingRegisters(holdingRegisterList[0].reg.modbusAddress, 0);
   
   for(int inputRegisterEntries = 0; inputRegisterEntries < sizeOfInputRegisterBuffer; inputRegisterEntries++){
-    // if(inputRegisterEntries == 0){
-    //   delay(20);
-    //   Serial.println("OutdoorTemp: " + inputRegsBuffer[inputRegisterEntries]);
-    // }  
-    // else if(inputRegisterEntries == 1){
-    //   delay(20);
-    //   Serial.println("RunMode: " + inputRegsBuffer[inputRegisterEntries] + airUnitRunModeString(inputRegsBuffer[inputRegisterEntries]));
-    // }
-    // else if(inputRegisterEntries == 2){
-    //   delay(20);
-    //   Serial.println("extractedAirTemp: " + inputRegsBuffer[inputRegisterEntries]);
-    // }
-    // else if(inputRegisterEntries == 3){
-    //   delay(20);
-    //   Serial.println("roomTemp1: " + inputRegsBuffer[inputRegisterEntries]);
-    // }
-    // else if(inputRegisterEntries == 4){
-    //   delay(20);
-    //   Serial.println("roomTemp2: " + inputRegsBuffer[inputRegisterEntries]);
-    // }
-    // else{
-    //   delay(20);
-    //   Serial.println(inputRegsBuffer[inputRegisterEntries]);
-    // }
-        
-  
     if(0==inputRegisterEntries){
       Serial.print("OutdoorTemp: ");
       Serial.print(inputRegsBuffer[inputRegisterEntries]);
@@ -151,12 +135,26 @@ void loop() {
       Serial.print(inputRegsBuffer[inputRegisterEntries]);
       Serial.println("°C");
     }
-    
+    if(3==inputRegisterEntries){
+      Serial.print("roomTemp1: ");
+      Serial.print(inputRegsBuffer[inputRegisterEntries]);
+      Serial.println("°C");
+    }
+    if(4==inputRegisterEntries){
+      Serial.print("roomTemp2: ");
+      Serial.print(inputRegsBuffer[inputRegisterEntries]);
+      Serial.println("°C");
+    }
     
   }
 
   for(int holdingRegisterEntries = 0; holdingRegisterEntries < sizeOfHoldingRegisterBuffer; holdingRegisterEntries++){
-    Serial.println(holdingRegsBuffer[holdingRegisterEntries]);
+    if(0==holdingRegisterEntries){
+      Serial.print("manualAutoOnOFF: ");
+      Serial.print(holdingRegsBuffer[holdingRegisterEntries]);
+      Serial.print(" ");
+      Serial.println(airUnitOnOFFString(holdingRegsBuffer[holdingRegisterEntries]));
+    }
   }
   Serial.println("------------");
 
