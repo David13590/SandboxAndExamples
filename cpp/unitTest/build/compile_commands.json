@@ -1,0 +1,22 @@
+[
+{
+  "directory": "/home/david/Programming/SandboxAndExamples/cpp/unitTest/build",
+  "command": "/usr/bin/g++ -g -o CMakeFiles/TestRunnerMainA.dir/cpputest/tests/test_runner_main_A.cpp.o -c /home/david/Programming/SandboxAndExamples/cpp/unitTest/demoUnitTest/cpputest/tests/test_runner_main_A.cpp",
+  "file": "/home/david/Programming/SandboxAndExamples/cpp/unitTest/demoUnitTest/cpputest/tests/test_runner_main_A.cpp"
+},
+{
+  "directory": "/home/david/Programming/SandboxAndExamples/cpp/unitTest/build",
+  "command": "/usr/bin/g++ -g -o CMakeFiles/TestRunnerMainA.dir/cpputest/tests/test_this-fails.cpp.o -c /home/david/Programming/SandboxAndExamples/cpp/unitTest/demoUnitTest/cpputest/tests/test_this-fails.cpp",
+  "file": "/home/david/Programming/SandboxAndExamples/cpp/unitTest/demoUnitTest/cpputest/tests/test_this-fails.cpp"
+},
+{
+  "directory": "/home/david/Programming/SandboxAndExamples/cpp/unitTest/build",
+  "command": "/usr/bin/g++ -g -o CMakeFiles/TestRunnerMainB.dir/cpputest/tests/test_runner_main_A.cpp.o -c /home/david/Programming/SandboxAndExamples/cpp/unitTest/demoUnitTest/cpputest/tests/test_runner_main_A.cpp",
+  "file": "/home/david/Programming/SandboxAndExamples/cpp/unitTest/demoUnitTest/cpputest/tests/test_runner_main_A.cpp"
+},
+{
+  "directory": "/home/david/Programming/SandboxAndExamples/cpp/unitTest/build",
+  "command": "/usr/bin/g++ -g -o CMakeFiles/TestRunnerMainB.dir/cpputest/tests/test_using_crc_lib.cpp.o -c /home/david/Programming/SandboxAndExamples/cpp/unitTest/demoUnitTest/cpputest/tests/test_using_crc_lib.cpp",
+  "file": "/home/david/Programming/SandboxAndExamples/cpp/unitTest/demoUnitTest/cpputest/tests/test_using_crc_lib.cpp"
+}
+]
