@@ -1,0 +1,8 @@
+[
+{
+  "directory": "C:/Users/David/Sandbox/Programming/SandboxAndExamples/cpp/Catch2_sandbox/build",
+  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe  @CMakeFiles/testC.dir/includes_CXX.rsp -g -o CMakeFiles\\testC.dir\\testCatch2.cpp.obj -c C:\\Users\\David\\Sandbox\\Programming\\SandboxAndExamples\\cpp\\Catch2_sandbox\\testCatch2.cpp",
+  "file": "C:/Users/David/Sandbox/Programming/SandboxAndExamples/cpp/Catch2_sandbox/testCatch2.cpp",
+  "output": "CMakeFiles/testC.dir/testCatch2.cpp.obj"
+}
+]

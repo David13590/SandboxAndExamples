@@ -1,0 +1,8 @@
+[
+{
+  "directory": "C:/Users/David/Sandbox/Programming/SandboxAndExamples/cpp/UnitTest/build",
+  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe   -g -o CMakeFiles\\testRunA.dir\\tests\\testrunnerA.cpp.obj -c C:\\Users\\David\\Sandbox\\Programming\\SandboxAndExamples\\cpp\\UnitTest\\tests\\testrunnerA.cpp",
+  "file": "C:/Users/David/Sandbox/Programming/SandboxAndExamples/cpp/UnitTest/tests/testrunnerA.cpp",
+  "output": "CMakeFiles/testRunA.dir/tests/testrunnerA.cpp.obj"
+}
+]
