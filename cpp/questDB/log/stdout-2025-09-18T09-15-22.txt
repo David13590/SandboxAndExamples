@@ -1,2 +1,0 @@
-Reading log configuration from /home/david/Programming/SandboxAndExamples/cpp/questDB/conf/log.conf
-2025-09-18T07:15:24.876939Z A http-min-server listening on 0.0.0.0:9003 [fd=586263036156 backlog=64]
