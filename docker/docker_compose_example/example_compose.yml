@@ -1,0 +1,24 @@
+version: "3.9"
+services:
+  service1:
+    build:
+      context: ./service1
+      dockerfile: python-server.Dockerfile
+    volumes:
+      - ./service1/app:/app
+    working_dir: /app
+    ports:
+      - "8000:8000"
+    command: python -m http.server 8000
+  
+  service2:
+    build:
+      context: ./service2
+      dockerfile: python-server2.Dockerfile
+    volumes:
+      - ./service2/app:/app
+    working_dir: /app
+    ports:
+      - "8050:8050"
+    command: python -m http.server 8050
+  
